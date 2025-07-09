@@ -9,7 +9,7 @@ public class HomeMenu {
     private JPanel contentPane;
     private JButton btn_newVault;
     private JButton btn_loadVault;
-    private JList list1;
+    private JList lst_recentVaults;
 
     public HomeMenu(JFrame parent) {
         btn_newVault.addActionListener(event -> {
