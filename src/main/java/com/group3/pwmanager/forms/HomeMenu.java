@@ -9,16 +9,10 @@ public class HomeMenu {
     private JPanel contentPane;
     private JButton btn_newVault;
     private JButton btn_loadVault;
-    private JList lst_recentVaults;
+    private JList<String> lst_recentVaults;
 
-    public HomeMenu(JFrame parent) {
-        btn_newVault.addActionListener(event -> {
-            parent.setContentPane(new VaultMenu().getContentPane());
-            parent.revalidate();
-            parent.setPreferredSize(VaultMenu.PREFERRED_SIZE);
-            parent.setSize(VaultMenu.PREFERRED_SIZE);
-            parent.setLocationRelativeTo(null);
-        });
+    public HomeMenu() {
+
     }
 
     public JPanel getContentPane() {
