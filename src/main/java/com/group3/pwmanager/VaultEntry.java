@@ -7,7 +7,7 @@ public class VaultEntry {
     private String username;
     private String password;
     private String note;
-    private LinkedHashSet<String> tags;
+    private LinkedHashSet<String> tags = new LinkedHashSet<>();
 
     public VaultEntry(String title, String username, String password, String note) {
         this.title = title;
