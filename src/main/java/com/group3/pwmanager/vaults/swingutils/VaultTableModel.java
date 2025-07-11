@@ -1,4 +1,4 @@
-package com.group3.pwmanager;
+package com.group3.pwmanager.vaults.swingutils;
 
 import javax.swing.table.DefaultTableModel;
 
