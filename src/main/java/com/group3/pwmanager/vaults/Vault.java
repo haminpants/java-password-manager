@@ -1,18 +1,25 @@
 package com.group3.pwmanager.vaults;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
 public class Vault {
     private int idCounter = 0;
     private String name;
-    private LinkedHashMap<Integer, VaultEntry> entries = new LinkedHashMap<>();
-    private VaultSettings settings;
+    private final LinkedHashMap<Integer, VaultEntry> entries = new LinkedHashMap<>();
+    private final VaultSettings settings;
+
+    public Vault (String name, Collection<VaultEntry> entries, VaultSettings settings) {
+        this.name = name;
+        this.settings = settings;
+        entries.forEach(this::addEntry);
+    }
 
     public Vault (String name) {
-        this.name = name;
-        this.settings = new VaultSettings();
+        this(name, List.of(), new VaultSettings());
     }
 
     public void addEntry (VaultEntry entry) {
