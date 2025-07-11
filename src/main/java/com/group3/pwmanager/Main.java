@@ -3,7 +3,6 @@ package com.group3.pwmanager;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.group3.pwmanager.forms.Menu;
 import com.group3.pwmanager.vaults.VaultMenu;
 import com.group3.pwmanager.vaults.Vault;
 import com.group3.pwmanager.vaults.VaultEntry;

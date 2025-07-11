@@ -1,6 +1,6 @@
 package com.group3.pwmanager.vaults;
 
-import com.group3.pwmanager.forms.Menu;
+import com.group3.pwmanager.Menu;
 import com.group3.pwmanager.vaults.swingutils.VaultTableCellRenderer;
 import com.group3.pwmanager.vaults.swingutils.VaultTableModel;
 

@@ -1,4 +1,4 @@
-package com.group3.pwmanager.forms;
+package com.group3.pwmanager;
 
 import javax.swing.*;
 import java.awt.*;
