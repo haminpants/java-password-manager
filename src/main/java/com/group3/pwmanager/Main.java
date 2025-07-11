@@ -3,14 +3,21 @@ package com.group3.pwmanager;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.group3.pwmanager.vaults.VaultMenu;
 import com.group3.pwmanager.vaults.Vault;
 import com.group3.pwmanager.vaults.VaultEntry;
+import com.group3.pwmanager.vaults.VaultMenu;
+import com.group3.pwmanager.vaults.VaultSettings;
+import com.group3.pwmanager.vaults.jsonadapters.VaultAdapter;
+import com.group3.pwmanager.vaults.jsonadapters.VaultEntryAdapter;
+import com.group3.pwmanager.vaults.jsonadapters.VaultSettingsAdapter;
 
 import javax.swing.*;
 
 public class Main {
-    public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+    public static final Gson GSON = new GsonBuilder().setPrettyPrinting()
+        .registerTypeAdapter(Vault.class, new VaultAdapter())
+        .registerTypeAdapter(VaultEntry.class, new VaultEntryAdapter())
+        .registerTypeAdapter(VaultSettings.class, new VaultSettingsAdapter()).create();
     private static final JFrame appFrame = new JFrame();
 
     public static void main (String[] args) {
@@ -31,8 +38,6 @@ public class Main {
         appFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         appFrame.setLocationRelativeTo(null);
         appFrame.setVisible(true);
-
-        vault.getEntry(0).ifPresent(e -> System.out.println(GSON.toJson(e)));
     }
 
     public static void setAppContent (Menu menu) {

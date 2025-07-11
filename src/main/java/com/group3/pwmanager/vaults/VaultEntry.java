@@ -1,11 +1,8 @@
 package com.group3.pwmanager.vaults;
 
-import com.google.gson.*;
-
-import java.lang.reflect.Type;
 import java.util.LinkedHashSet;
 
-public class VaultEntry implements JsonSerializer<VaultEntry> {
+public class VaultEntry {
     private String title;
     private String username;
     private String password;
@@ -43,16 +40,7 @@ public class VaultEntry implements JsonSerializer<VaultEntry> {
         return note;
     }
 
-    @Override
-    public JsonElement serialize (VaultEntry entry, Type type, JsonSerializationContext context) {
-        JsonArray tagsJson = new JsonArray();
-        entry.tags.forEach(tagsJson::add);
-
-        JsonObject entryJson = new JsonObject();
-        entryJson.addProperty("title", entry.title);
-        entryJson.addProperty("username", entry.username);
-        entryJson.addProperty("password", entry.password);
-        entryJson.add("tags", tagsJson);
-        return entryJson;
+    public LinkedHashSet<String> getTags () {
+        return tags;
     }
 }
