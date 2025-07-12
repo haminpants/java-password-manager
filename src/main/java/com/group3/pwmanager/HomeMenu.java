@@ -31,6 +31,8 @@ public class HomeMenu implements Menu {
             }
         });
 
+        btn_newVault.addActionListener(event -> Main.setAppContent(new VaultMenu(new Vault("New Vault"))));
+
         btn_loadVault.addActionListener(event -> {
             if (fileChooser.showOpenDialog(contentPane) != JFileChooser.APPROVE_OPTION) return;
             try (FileReader fileReader = new FileReader(fileChooser.getSelectedFile());
