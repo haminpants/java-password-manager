@@ -1,5 +1,6 @@
 package com.group3.pwmanager.vaults;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.function.BiConsumer;
 
 public class Vault {
     private int idCounter = 0;
+    private File file;
     private String name;
     private final LinkedHashMap<Integer, VaultEntry> entries = new LinkedHashMap<>();
     private final VaultSettings settings;

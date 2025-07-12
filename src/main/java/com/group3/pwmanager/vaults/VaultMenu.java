@@ -22,6 +22,10 @@ public class VaultMenu implements Menu {
     private JButton button5;
     private JButton button6;
 
+    private JMenuBar menuBar = new JMenuBar();
+    private JMenu fileMenu = new JMenu("File");
+    private JMenuItem fileSaveMenuItem = new JMenuItem("Save", KeyEvent.VK_S);
+
     private final Vault vault;
     private final TableColumnModel columnModel;
     private final VaultTableModel entryTable = new VaultTableModel();
@@ -31,6 +35,7 @@ public class VaultMenu implements Menu {
         this.vault = vault;
         this.columnModel = tbl_entries.getColumnModel();
 
+        // Entry table setup
         entryTable.setColumnIdentifiers(new Object[]{"ID", "Title", "Username", "Notes"});
         tbl_entries.setModel(entryTable);
         tbl_entries.setDefaultRenderer(Object.class, cellRenderer);
@@ -38,11 +43,15 @@ public class VaultMenu implements Menu {
         tbl_entries.removeColumn(columnModel.getColumn(0));
         vault.forEachEntry((id, entry) -> entryTable.addRow(new Object[]{id, entry.getTitle(), entry.getUsername(), entry.getNote()}));
 
-        InputMap inputMap = pnl_main.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        ActionMap actionMap = pnl_main.getActionMap();
+        // Menu bar setup
+        fileMenu.add(fileSaveMenuItem);
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        menuBar.add(fileMenu);
 
+        // Input map and action map setup
+        InputMap inputMap = pnl_main.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "clear_selection");
-        actionMap.put("clear_selection", new AbstractAction() {
+        pnl_main.getActionMap().put("clear_selection", new AbstractAction() {
             @Override
             public void actionPerformed (ActionEvent e) {
                 tbl_entries.clearSelection();
@@ -107,5 +116,10 @@ public class VaultMenu implements Menu {
     @Override
     public Dimension getPreferredSize () {
         return new Dimension(900, 600);
+    }
+
+    @Override
+    public JMenuBar getMenuBar () {
+        return menuBar;
     }
 }

@@ -1,5 +1,6 @@
 package com.group3.pwmanager;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,6 +33,7 @@ public class Main {
     public static void setAppContent (Menu menu) {
         appFrame.setContentPane(menu.getContentPane());
         appFrame.setPreferredSize(menu.getPreferredSize());
+        appFrame.setJMenuBar(menu.getMenuBar());
         appFrame.pack();
         appFrame.revalidate();
     }

@@ -7,4 +7,6 @@ public interface Menu {
     JPanel getContentPane();
 
     Dimension getPreferredSize();
+
+    JMenuBar getMenuBar();
 }

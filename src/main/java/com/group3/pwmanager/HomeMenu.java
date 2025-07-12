@@ -63,4 +63,9 @@ public class HomeMenu implements Menu {
     public Dimension getPreferredSize () {
         return new Dimension(300, 400);
     }
+
+    @Override
+    public JMenuBar getMenuBar () {
+        return null;
+    }
 }
