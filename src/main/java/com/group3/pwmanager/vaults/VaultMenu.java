@@ -1,6 +1,8 @@
 package com.group3.pwmanager.vaults;
 
+import com.group3.pwmanager.Main;
 import com.group3.pwmanager.Menu;
+import com.group3.pwmanager.vaults.swingutils.VaultFileFilter;
 import com.group3.pwmanager.vaults.swingutils.VaultTableCellRenderer;
 import com.group3.pwmanager.vaults.swingutils.VaultTableModel;
 
@@ -9,10 +11,15 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
-public class VaultMenu implements Menu {
+public class VaultMenu implements Menu, ActionListener {
     private JPanel pnl_main;
     private JTable tbl_entries;
     private JButton button1;
@@ -44,9 +51,11 @@ public class VaultMenu implements Menu {
         vault.forEachEntry((id, entry) -> entryTable.addRow(new Object[]{id, entry.getTitle(), entry.getUsername(), entry.getNote()}));
 
         // Menu bar setup
-        fileMenu.add(fileSaveMenuItem);
-        fileMenu.setMnemonic(KeyEvent.VK_F);
         menuBar.add(fileMenu);
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        fileMenu.add(fileSaveMenuItem);
+        fileSaveMenuItem.setActionCommand("file_save");
+        fileSaveMenuItem.addActionListener(this);
 
         // Input map and action map setup
         InputMap inputMap = pnl_main.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -108,14 +117,45 @@ public class VaultMenu implements Menu {
         this(new Vault("New Vault"));
     }
 
-    @Override
-    public JPanel getContentPane () {
-        return pnl_main;
+    private boolean save () {
+        // If the vault doesn't have an associated file, prompt the user to create a new one
+        if (vault.getFile() == null) {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setAcceptAllFileFilterUsed(false);
+            fileChooser.setFileFilter(new VaultFileFilter());
+            fileChooser.setSelectedFile(new File(vault.getName() + "." + Vault.FILE_EXTENSION));
+            if (fileChooser.showSaveDialog(pnl_main) != JFileChooser.APPROVE_OPTION) return false;
+
+            File file = fileChooser.getSelectedFile();
+            file = !file.getName().endsWith("." + Vault.FILE_EXTENSION)
+                ? new File(file + "." + Vault.FILE_EXTENSION)
+                : file;
+            vault.setFile(file);
+        }
+
+        try (FileWriter fileWriter = new FileWriter(vault.getFile());
+            BufferedWriter writer = new BufferedWriter(fileWriter)) {
+            writer.write(Main.GSON.toJson(vault, Vault.class));
+            System.out.println(vault.getFile());
+            return true;
+        }
+        catch (IOException e) {
+            // TODO: more robust error handling
+            System.out.println("Failed to save");
+            return false;
+        }
     }
 
     @Override
-    public Dimension getPreferredSize () {
-        return new Dimension(900, 600);
+    public void actionPerformed (ActionEvent e) {
+        if (e.getActionCommand().equals(fileSaveMenuItem.getActionCommand())) {
+            save();
+        }
+    }
+
+    @Override
+    public JPanel getContentPane () {
+        return pnl_main;
     }
 
     @Override

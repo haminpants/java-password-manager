@@ -4,9 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public interface Menu {
-    JPanel getContentPane();
+    JPanel getContentPane ();
 
-    Dimension getPreferredSize();
-
-    JMenuBar getMenuBar();
+    JMenuBar getMenuBar ();
 }
