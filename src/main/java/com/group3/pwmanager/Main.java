@@ -21,18 +21,16 @@ public class Main {
 
     public static void main (String[] args) {
         FlatDarkLaf.setup();
+        setAppContent(new HomeMenu());
 
-        HomeMenu homeMenu = new HomeMenu();
         appFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        appFrame.setContentPane(homeMenu.getContentPane());
-        appFrame.pack();
-        appFrame.setLocationRelativeTo(null);
         appFrame.setVisible(true);
     }
 
     public static void setAppContent (Menu menu) {
-        appFrame.setContentPane(menu.getContentPane());
+        appFrame.setTitle(menu.getTitle());
         appFrame.setJMenuBar(menu.getMenuBar());
+        appFrame.setContentPane(menu.getContentPane());
         appFrame.pack();
         appFrame.revalidate();
         appFrame.setLocationRelativeTo(null);

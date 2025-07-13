@@ -39,6 +39,11 @@ public class HomeMenu implements Menu {
     }
 
     @Override
+    public String getTitle () {
+        return "Java Password Manager";
+    }
+
+    @Override
     public JMenuBar getMenuBar () {
         return null;
     }

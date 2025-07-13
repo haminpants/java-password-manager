@@ -167,6 +167,11 @@ public class VaultMenu implements Menu, ActionListener {
     }
 
     @Override
+    public String getTitle () {
+        return vault.getName() + " - Java Password Manager";
+    }
+
+    @Override
     public JMenuBar getMenuBar () {
         return menuBar;
     }
