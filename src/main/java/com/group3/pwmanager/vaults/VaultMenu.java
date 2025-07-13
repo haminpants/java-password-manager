@@ -67,6 +67,14 @@ public class VaultMenu implements Menu, ActionListener {
             }
         });
 
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK), "save");
+        pnl_main.getActionMap().put("save", new AbstractAction() {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                save();
+            }
+        });
+
         tbl_entries.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "focus_next");
         tbl_entries.getActionMap().put("focus_next", new AbstractAction() {
             @Override
