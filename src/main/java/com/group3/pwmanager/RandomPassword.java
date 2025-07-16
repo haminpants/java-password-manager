@@ -1,4 +1,4 @@
-package aes.test;
+package com.group3.pwmanager;
 
 import java.security.SecureRandom;
 import java.util.function.IntPredicate;

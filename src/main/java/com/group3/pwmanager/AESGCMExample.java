@@ -1,4 +1,4 @@
-package aes.test;
+package com.group3.pwmanager;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -15,21 +15,21 @@ public class AESGCMExample {
     private static final int TAG_BIT_LENGTH = 128;
 
     // Generate a random AES 256-bit key
-    public static SecretKey generateKey() throws Exception {
+    public static SecretKey generateKey () throws Exception {
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
         keyGen.init(AES_KEY_SIZE);
         return keyGen.generateKey();
     }
 
     // Generate a random 12-byte IV
-    public static byte[] generateIV() {
+    public static byte[] generateIV () {
         byte[] iv = new byte[IV_SIZE];
         new SecureRandom().nextBytes(iv);
         return iv;
     }
 
     // Encrypt plaintext
-    public static byte[] encrypt(byte[] plaintext, SecretKey key, byte[] iv) throws Exception {
+    public static byte[] encrypt (byte[] plaintext, SecretKey key, byte[] iv) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         GCMParameterSpec spec = new GCMParameterSpec(TAG_BIT_LENGTH, iv);
         cipher.init(Cipher.ENCRYPT_MODE, key, spec);
@@ -37,7 +37,7 @@ public class AESGCMExample {
     }
 
     // Decrypt ciphertext
-    public static byte[] decrypt(byte[] ciphertext, SecretKey key, byte[] iv) throws Exception {
+    public static byte[] decrypt (byte[] ciphertext, SecretKey key, byte[] iv) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         GCMParameterSpec spec = new GCMParameterSpec(TAG_BIT_LENGTH, iv);
         cipher.init(Cipher.DECRYPT_MODE, key, spec);
@@ -45,18 +45,18 @@ public class AESGCMExample {
     }
 
     // Helper: Convert SecretKey to base64 string
-    public static String keyToBase64(SecretKey key) {
+    public static String keyToBase64 (SecretKey key) {
         return Base64.getEncoder().encodeToString(key.getEncoded());
     }
 
     // Helper: Rebuild SecretKey from base64
-    public static SecretKey base64ToKey(String keyStr) {
+    public static SecretKey base64ToKey (String keyStr) {
         byte[] decoded = Base64.getDecoder().decode(keyStr);
         return new SecretKeySpec(decoded, 0, decoded.length, "AES");
     }
 
     // Demo
-    public static void main(String[] args) throws Exception {
+    public static void main (String[] args) throws Exception {
         String message = "whats up!";
         SecretKey key = generateKey();
         byte[] iv = generateIV();
