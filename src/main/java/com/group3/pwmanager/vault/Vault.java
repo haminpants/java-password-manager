@@ -5,6 +5,7 @@ import com.group3.pwmanager.vault.swingutils.VaultTableCellRenderer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -20,6 +21,7 @@ public class Vault {
     private JTable tbl_entries;
     private JButton btn_addEntry;
     private JButton btn_editEntry;
+    private JButton btn_copyPassword;
 
     private final JFrame frame = new JFrame();
     private final VaultEntryTableModel tableModel = new VaultEntryTableModel();
@@ -43,8 +45,7 @@ public class Vault {
         tbl_entries.setDefaultRenderer(Object.class, new VaultTableCellRenderer());
         tbl_entries.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-        tbl_entries.getSelectionModel()
-            .addListSelectionListener(e -> btn_editEntry.setEnabled(tbl_entries.getSelectedRow() != -1));
+        tbl_entries.getSelectionModel().addListSelectionListener(e -> updateEntryButtons());
 
         tbl_entries.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "focus_next");
         tbl_entries.getActionMap().put("focus_next", new AbstractAction() {
@@ -85,12 +86,21 @@ public class Vault {
         btn_editEntry.addActionListener(event -> {
             int index = tbl_entries.getSelectedRow();
             if (index == -1) {
-                btn_editEntry.setEnabled(false);
+                updateEntryButtons();
                 return;
             }
 
             VaultEntryDialogue dialogue = new VaultEntryDialogue(this, tableModel.get(index));
             dialogue.setVisible(true);
+        });
+
+        btn_copyPassword.addActionListener(event -> {
+            int index = tbl_entries.getSelectedRow();
+            if (index == -1) {
+                updateEntryButtons();
+                return;
+            }
+            copyPassword(index);
         });
 
         // Set up key bindings
@@ -109,6 +119,14 @@ public class Vault {
             @Override
             public void actionPerformed (ActionEvent e) {
                 save();
+            }
+        });
+
+        tbl_entries.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK), "copy_pw");
+        tbl_entries.getActionMap().put("copy_pw", new AbstractAction() {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                copyPassword(tbl_entries.getSelectedRow());
             }
         });
 
@@ -140,6 +158,17 @@ public class Vault {
             // TODO: implement robust handling
             throw new RuntimeException(e);
         }
+    }
+
+    private void copyPassword (int entryIndex) {
+        if (entryIndex < 0 || entryIndex > tableModel.getRowCount()) return;
+        Toolkit.getDefaultToolkit().getSystemClipboard()
+            .setContents(new StringSelection(tableModel.get(entryIndex).getPassword()), null);
+    }
+
+    private void updateEntryButtons () {
+        btn_editEntry.setEnabled(tbl_entries.getSelectedRow() != -1);
+        btn_copyPassword.setEnabled(tbl_entries.getSelectedRow() != -1);
     }
 
     public void add (VaultEntry entry) {
