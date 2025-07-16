@@ -16,6 +16,13 @@ public class VaultEntry {
         this.note = note;
     }
 
+    protected VaultEntry () {
+        this.title = "";
+        this.username = "";
+        this.password = "";
+        this.note = "";
+    }
+
     public boolean addTag (String tag) {
         return tags.add(tag);
     }
@@ -42,5 +49,21 @@ public class VaultEntry {
 
     public LinkedHashSet<String> getTags () {
         return tags;
+    }
+
+    protected void setTitle (String title) {
+        this.title = title;
+    }
+
+    protected void setUsername (String username) {
+        this.username = username;
+    }
+
+    protected void setPassword (String password) {
+        this.password = password;
+    }
+
+    protected void setNote (String note) {
+        this.note = note;
     }
 }

@@ -22,12 +22,9 @@ import java.io.IOException;
 public class VaultMenu implements Menu, ActionListener {
     private JPanel pnl_main;
     private JTable tbl_entries;
-    private JButton button1;
+    private JButton btn_createEntry;
     private JButton button2;
     private JButton button3;
-    private JButton button4;
-    private JButton button5;
-    private JButton button6;
 
     private JMenuBar menuBar = new JMenuBar();
     private JMenu fileMenu = new JMenu("File");
@@ -119,6 +116,9 @@ public class VaultMenu implements Menu, ActionListener {
                     ((JFrame) SwingUtilities.getWindowAncestor(pnl_main)).setState(Frame.ICONIFIED);
             }
         });
+
+        // Button setup
+        btn_createEntry.addActionListener(event -> createVaultEntryDialogue());
     }
 
     public VaultMenu () {
@@ -154,11 +154,27 @@ public class VaultMenu implements Menu, ActionListener {
         }
     }
 
+    private void createVaultEntryDialogue () {
+        JFrame parent = (JFrame) SwingUtilities.getWindowAncestor(pnl_main);
+        VaultEntryMenu menu = new VaultEntryMenu(this);
+        menu.pack();
+        menu.setLocationRelativeTo(parent);
+        menu.setVisible(true);
+    }
+
+    public void refreshTable () {
+        entryTable.fireTableDataChanged();
+    }
+
     @Override
     public void actionPerformed (ActionEvent e) {
         if (e.getActionCommand().equals(fileSaveMenuItem.getActionCommand())) {
             save();
         }
+    }
+
+    protected Vault getVault () {
+        return vault;
     }
 
     @Override
