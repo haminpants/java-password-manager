@@ -82,21 +82,8 @@ public class Vault {
         });
 
         // Set up buttons
-        btn_addEntry.addActionListener(event -> {
-            VaultEntryDialogue dialogue = new VaultEntryDialogue(this);
-            dialogue.setVisible(true);
-        });
-
-        btn_editEntry.addActionListener(event -> {
-            int index = tbl_entries.getSelectedRow();
-            if (index == -1) {
-                updateEntryButtons();
-                return;
-            }
-
-            VaultEntryDialogue dialogue = new VaultEntryDialogue(this, tableModel.get(index));
-            dialogue.setVisible(true);
-        });
+        btn_addEntry.addActionListener(event -> showCreateEntryDialogue());
+        btn_editEntry.addActionListener(event -> showEditEntryDialogue());
 
         btn_copyPassword.addActionListener(event -> {
             int index = tbl_entries.getSelectedRow();
@@ -123,6 +110,15 @@ public class Vault {
             @Override
             public void actionPerformed (ActionEvent e) {
                 save();
+            }
+        });
+
+        pnl_main.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK), "create_entry");
+        pnl_main.getActionMap().put("create_entry", new AbstractAction() {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                showCreateEntryDialogue();
             }
         });
 
@@ -161,6 +157,14 @@ public class Vault {
             @Override
             public void actionPerformed (ActionEvent e) {
                 copyPassword(tbl_entries.getSelectedRow());
+            }
+        });
+
+        tbl_entries.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_DOWN_MASK), "edit_entry");
+        tbl_entries.getActionMap().put("edit_entry", new AbstractAction() {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                showEditEntryDialogue();
             }
         });
 
@@ -205,6 +209,22 @@ public class Vault {
         Toolkit.getDefaultToolkit()
             .getSystemClipboard()
             .setContents(new StringSelection(tableModel.get(entryIndex).getPassword()), null);
+    }
+
+    private void showCreateEntryDialogue () {
+        VaultEntryDialogue dialogue = new VaultEntryDialogue(this);
+        dialogue.setVisible(true);
+    }
+
+    private void showEditEntryDialogue () {
+        int index = tbl_entries.getSelectedRow();
+        if (index == -1) {
+            updateEntryButtons();
+            return;
+        }
+
+        VaultEntryDialogue dialogue = new VaultEntryDialogue(this, tableModel.get(index));
+        dialogue.setVisible(true);
     }
 
     private void updateEntryButtons () {
