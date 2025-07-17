@@ -8,9 +8,7 @@ import javax.crypto.SecretKey;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -28,8 +26,9 @@ public class Vault {
 
     private final HomeMenu owner;
     private final JFrame frame;
-    private SecretKey key;
+    private final SecretKey key;
     private File file;
+    private boolean unsavedChanges = false;
 
     private String name = "New Vault";
     private final VaultEntryTableModel tableModel = new VaultEntryTableModel();
@@ -42,7 +41,16 @@ public class Vault {
         frame.pack();
 
         frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing (WindowEvent e) {
+                if (!unsavedChanges) System.exit(0);
+                if (JOptionPane.showConfirmDialog(frame, "You have unsaved changes. Are you sure you want to quit?",
+                    "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION)
+                    System.exit(0);
+            }
+        });
 
         // Set up table
         tbl_entries.setModel(tableModel);
@@ -159,6 +167,7 @@ public class Vault {
 
         try (FileWriter fw = new FileWriter(file); BufferedWriter writer = new BufferedWriter(fw)) {
             writer.write(EncryptionUtils.encrypt(owner.getGson().toJson(this, Vault.class), key));
+            setUnsavedChanges(false);
         }
         catch (IOException e) {
             // TODO: implement robust handling
@@ -191,7 +200,8 @@ public class Vault {
     }
 
     private String getWindowTitle () {
-        return name + " - Java Password Manager";
+        System.out.println(name);
+        return (unsavedChanges ? "*" : "") + name + " - Java Password Manager";
     }
 
     protected JFrame getFrame () {
@@ -208,5 +218,10 @@ public class Vault {
 
     public void setVisible (boolean visible) {
         frame.setVisible(visible);
+    }
+
+    public void setUnsavedChanges (boolean unsavedChanges) {
+        this.unsavedChanges = unsavedChanges;
+        frame.setTitle(getWindowTitle());
     }
 }

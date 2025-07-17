@@ -39,7 +39,9 @@ public class HomeMenu {
 
         // File chooser setup
         fileChooser.setAcceptAllFileFilterUsed(false);
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Java Password Manager Vault (*." + Vault.FILE_EXTENSION + ")", Vault.FILE_EXTENSION));
+        fileChooser.setFileFilter(
+            new FileNameExtensionFilter("Java Password Manager Vault (*." + Vault.FILE_EXTENSION + ")",
+                Vault.FILE_EXTENSION));
 
         // Setup JFrame
         frame.setTitle("Start Menu - Java Password Manager");
@@ -70,8 +72,8 @@ public class HomeMenu {
                 while ((c = reader.read()) != -1) cipherText.append((char) c);
             }
             catch (FileNotFoundException e) {
-                JOptionPane.showMessageDialog(frame, "Selected file does not exist", "Oops!", JOptionPane.ERROR_MESSAGE);
-                throw new RuntimeException(e);
+                JOptionPane.showMessageDialog(frame, "Selected file does not exist", "Oops!",
+                    JOptionPane.ERROR_MESSAGE);
             }
             catch (IOException e) {
                 // TODO: implement robust handling
@@ -92,7 +94,8 @@ public class HomeMenu {
                 setVisible(false);
             }
             catch (AEADBadTagException e) {
-                JOptionPane.showMessageDialog(frame, "Entered key is incorrect", "Invalid Key", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Entered key is incorrect", "Invalid Key",
+                    JOptionPane.ERROR_MESSAGE);
             }
             catch (Exception e) {
                 // TODO: more robust handling

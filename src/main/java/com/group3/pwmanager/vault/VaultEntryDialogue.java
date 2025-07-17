@@ -82,6 +82,7 @@ public class VaultEntryDialogue extends JDialog {
             vault.getTableModel().updateEntry(entry);
         }
         else vault.add(new VaultEntry(title, username, password, note));
+        vault.setUnsavedChanges(true);
         return true;
     }
 
