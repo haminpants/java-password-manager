@@ -11,6 +11,7 @@ public class VaultEntryDialogue extends JDialog {
     private JTextField txt_title;
     private JTextField txt_username;
     private JPasswordField pwd_password;
+    private JButton btn_togglePasswordVisibility;
     private JTextArea txa_note;
     private JButton btn_save;
     private JButton btn_saveClose;
@@ -43,6 +44,9 @@ public class VaultEntryDialogue extends JDialog {
         btn_saveClose.addActionListener(event -> {
             if (save()) dispose();
         });
+
+        btn_togglePasswordVisibility.addActionListener(
+            event -> pwd_password.setEchoChar(pwd_password.getEchoChar() == echoChar ? (char) 0 : echoChar));
 
         // Set keybinds
         pnl_main.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)

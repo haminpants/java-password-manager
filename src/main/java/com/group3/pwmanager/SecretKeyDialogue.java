@@ -13,16 +13,13 @@ public class SecretKeyDialogue extends JDialog {
     private JButton btn_toggleVisibility;
     private JButton btn_submit;
 
-    private final char echoChar;
+    private final char echoChar = pwd_key.getEchoChar();
     private SecretKey key;
 
     public SecretKeyDialogue (Window owner) {
         super(owner, ModalityType.APPLICATION_MODAL);
         setContentPane(pnl_main);
         getRootPane().setDefaultButton(btn_submit);
-
-        // Set instance variables
-        this.echoChar = pwd_key.getEchoChar();
 
         // Set up buttons
         btn_submit.addActionListener(event -> onSubmit());
