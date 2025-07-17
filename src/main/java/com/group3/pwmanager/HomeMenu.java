@@ -75,8 +75,8 @@ public class HomeMenu {
                     JOptionPane.ERROR_MESSAGE);
             }
             catch (IOException e) {
-                // TODO: implement robust handling
-                throw new RuntimeException(e);
+                JOptionPane.showMessageDialog(frame, "Unexpected error occurred", "Oops!", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
             }
 
             SecretKey key = new SecretKeyDialogue(frame).showKeyDialogue();
@@ -96,7 +96,7 @@ public class HomeMenu {
                     JOptionPane.ERROR_MESSAGE);
             }
             catch (Exception e) {
-                // TODO: more robust handling
+                JOptionPane.showMessageDialog(frame, "Unexpected error occurred", "Oops!", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
         });
