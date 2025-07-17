@@ -1,14 +1,17 @@
 package com.group3.pwmanager.vault;
 
+import com.group3.pwmanager.EncryptionUtils;
 import com.group3.pwmanager.HomeMenu;
 import com.group3.pwmanager.vault.swingutils.VaultTableCellRenderer;
 
+import javax.crypto.SecretKey;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,15 +26,17 @@ public class Vault {
     private JButton btn_editEntry;
     private JButton btn_copyPassword;
 
-    private final JFrame frame = new JFrame();
-    private final VaultEntryTableModel tableModel = new VaultEntryTableModel();
-
     private final HomeMenu owner;
-    private String name = "New Vault";
+    private final JFrame frame;
+    private SecretKey key;
     private File file;
 
-    public Vault (HomeMenu owner) {
+    private String name = "New Vault";
+    private final VaultEntryTableModel tableModel = new VaultEntryTableModel();
+
+    public Vault (HomeMenu owner, SecretKey key) {
         // Set up JFrame
+        this.frame = new JFrame();
         frame.setTitle(getWindowTitle());
         frame.setContentPane(pnl_main);
         frame.pack();
@@ -132,10 +137,11 @@ public class Vault {
 
         // Parameters
         this.owner = owner;
+        this.key = key;
     }
 
-    public Vault (HomeMenu owner, String name, File file, List<VaultEntry> entries) {
-        this(owner);
+    public Vault (HomeMenu owner, SecretKey key, String name, File file, List<VaultEntry> entries) {
+        this(owner, key);
         this.name = name;
         this.file = file;
         tableModel.addEntries(entries);
@@ -151,10 +157,14 @@ public class Vault {
             fileChooser.setSelectedFile(null);
         }
 
-        try (FileWriter writer = new FileWriter(file)) {
-            owner.getGson().toJson(this, Vault.class, writer);
+        try (FileWriter fw = new FileWriter(file); BufferedWriter writer = new BufferedWriter(fw)) {
+            writer.write(EncryptionUtils.encrypt(owner.getGson().toJson(this, Vault.class), key));
         }
         catch (IOException e) {
+            // TODO: implement robust handling
+            throw new RuntimeException(e);
+        }
+        catch (Exception e) {
             // TODO: implement robust handling
             throw new RuntimeException(e);
         }
@@ -162,7 +172,8 @@ public class Vault {
 
     private void copyPassword (int entryIndex) {
         if (entryIndex < 0 || entryIndex > tableModel.getRowCount()) return;
-        Toolkit.getDefaultToolkit().getSystemClipboard()
+        Toolkit.getDefaultToolkit()
+            .getSystemClipboard()
             .setContents(new StringSelection(tableModel.get(entryIndex).getPassword()), null);
     }
 

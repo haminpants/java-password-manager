@@ -5,6 +5,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.swing.*;
+import java.awt.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -15,13 +17,16 @@ public class EncryptionUtils {
     private static final int IV_SIZE = 12; // 96 bits, recommended for GCM
     private static final int TAG_BIT_LENGTH = 128;
 
-    public static SecretKey generateKeyFromString (String keyString) throws NoSuchAlgorithmException {
-        // Generate a fixed-length (256-bit) hash based on the key string
-        MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-        byte[] keyStringHash = messageDigest.digest(keyString.getBytes());
+    public static SecretKey generateKeyFromString (String keyString) {
+        try {
+            // Generate a fixed-length (256-bit) hash based on the key string
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            byte[] keyStringHash = messageDigest.digest(keyString.getBytes());
 
-        // Use the key string to create the secret key
-        return new SecretKeySpec(keyStringHash, "AES");
+            // Use the key string to create the secret key
+            return new SecretKeySpec(keyStringHash, "AES");
+        }
+        catch (NoSuchAlgorithmException ignored) { return null; }
     }
 
     // Generate a random AES 256-bit key
