@@ -11,6 +11,8 @@ import com.group3.pwmanager.vault.adapters.VaultBuilderAdapter;
 import com.group3.pwmanager.vault.adapters.VaultEntryAdapter;
 import com.group3.pwmanager.vault.adapters.VaultEntryTableModelAdapter;
 
+import javax.crypto.AEADBadTagException;
+import javax.crypto.SecretKey;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.FileNotFoundException;
@@ -32,7 +34,8 @@ public class HomeMenu {
         gson = new GsonBuilder().registerTypeAdapter(Vault.class, new VaultAdapter())
             .registerTypeAdapter(VaultBuilder.class, new VaultBuilderAdapter())
             .registerTypeAdapter(VaultEntry.class, new VaultEntryAdapter())
-            .registerTypeAdapter(VaultEntryTableModel.class, new VaultEntryTableModelAdapter()).create();
+            .registerTypeAdapter(VaultEntryTableModel.class, new VaultEntryTableModelAdapter())
+            .create();
 
         // File chooser setup
         fileChooser.setAcceptAllFileFilterUsed(false);
@@ -49,34 +52,53 @@ public class HomeMenu {
 
         // Setup buttons
         btn_createVault.addActionListener(event -> {
-            Vault vault = new Vault(this);
+            String keyString = JOptionPane.showInputDialog(frame, "Create a key for your vault");
+            if (keyString == null) return;
+            SecretKey key = EncryptionUtils.generateKeyFromString(keyString);
+
+            Vault vault = new Vault(this, key);
             vault.setVisible(true);
             setVisible(false);
         });
 
         btn_loadVault.addActionListener(event -> {
             if (fileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION) return;
-            try (FileReader reader = new FileReader(fileChooser.getSelectedFile())) {
-                VaultBuilder vaultBuilder = gson.fromJson(reader, VaultBuilder.class);
-                vaultBuilder.setFile(fileChooser.getSelectedFile());
 
-                Vault vault = vaultBuilder.build(this);
-                vault.setVisible(true);
-                setVisible(false);
+            StringBuilder cipherText = new StringBuilder();
+            try (FileReader reader = new FileReader(fileChooser.getSelectedFile())) {
+                int c;
+                while ((c = reader.read()) != -1) cipherText.append((char) c);
             }
             catch (FileNotFoundException e) {
-                // TODO: implement robust handling
+                JOptionPane.showMessageDialog(frame, "Selected file does not exist", "Oops!", JOptionPane.ERROR_MESSAGE);
                 throw new RuntimeException(e);
             }
             catch (IOException e) {
                 // TODO: implement robust handling
                 throw new RuntimeException(e);
             }
-        });
-    }
 
-    public void setVisible (boolean visible) {
-        frame.setVisible(visible);
+            String keyString = JOptionPane.showInputDialog(frame, "Enter the key to this vault");
+            if (keyString == null) return;
+            SecretKey key = EncryptionUtils.generateKeyFromString(keyString);
+
+            try {
+                String vaultJson = EncryptionUtils.decrypt(cipherText.toString(), key);
+                VaultBuilder vaultBuilder = gson.fromJson(vaultJson, VaultBuilder.class)
+                    .setFile(fileChooser.getSelectedFile());
+
+                Vault vault = vaultBuilder.build(this, key);
+                vault.setVisible(true);
+                setVisible(false);
+            }
+            catch (AEADBadTagException e) {
+                JOptionPane.showMessageDialog(frame, "Entered key is incorrect", "Invalid Key", JOptionPane.ERROR_MESSAGE);
+            }
+            catch (Exception e) {
+                // TODO: more robust handling
+                e.printStackTrace();
+            }
+        });
     }
 
     public Gson getGson () {
@@ -85,5 +107,9 @@ public class HomeMenu {
 
     public JFileChooser getFileChooser () {
         return fileChooser;
+    }
+
+    public void setVisible (boolean visible) {
+        frame.setVisible(visible);
     }
 }
