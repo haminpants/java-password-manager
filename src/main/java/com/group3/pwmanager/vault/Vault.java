@@ -24,6 +24,11 @@ public class Vault {
     private JButton btn_editEntry;
     private JButton btn_copyPassword;
 
+    private JMenuBar menuBar = new JMenuBar();
+    private JMenu fileMenu = new JMenu("File");
+    private JMenuItem fileSaveItem = new JMenuItem("Save", KeyEvent.VK_S);
+    private JMenuItem fileCloseItem = new JMenuItem("Close Vault", KeyEvent.VK_C);
+
     private final HomeMenu owner;
     private final JFrame frame;
     private final SecretKey key;
@@ -45,10 +50,9 @@ public class Vault {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing (WindowEvent e) {
-                if (!unsavedChanges) System.exit(0);
-                if (JOptionPane.showConfirmDialog(frame, "You have unsaved changes. Are you sure you want to quit?",
-                    "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION)
-                    System.exit(0);
+                if (!unsavedChanges || JOptionPane.showConfirmDialog(frame,
+                    "You have unsaved changes. Are you sure you want to quit?", "Warning", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) System.exit(0);
             }
         });
 
@@ -57,36 +61,23 @@ public class Vault {
         tbl_entries.getTableHeader().setReorderingAllowed(false);
         tbl_entries.setDefaultRenderer(Object.class, new VaultTableCellRenderer());
         tbl_entries.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
         tbl_entries.getSelectionModel().addListSelectionListener(e -> updateEntryButtons());
 
-        tbl_entries.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "focus_next");
-        tbl_entries.getActionMap().put("focus_next", new AbstractAction() {
-            @Override
-            public void actionPerformed (ActionEvent e) {
-                int nextRowIndex = tbl_entries.getSelectedRow() + 1;
-                if (nextRowIndex == tbl_entries.getRowCount()) {
-                    KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent();
-                    tbl_entries.clearSelection();
-                }
-                else tbl_entries.setRowSelectionInterval(nextRowIndex, nextRowIndex);
-            }
-        });
+        // Set up menu bar
+        frame.setJMenuBar(menuBar);
+        menuBar.add(fileMenu);
+        fileMenu.setMnemonic(KeyEvent.VK_F);
 
-        tbl_entries.getInputMap(JComponent.WHEN_FOCUSED)
-            .put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_DOWN_MASK), "focus_previous");
-        tbl_entries.getActionMap().put("focus_previous", new AbstractAction() {
-            @Override
-            public void actionPerformed (ActionEvent e) {
-                if (tbl_entries.getSelectedRow() == 0) {
-                    KeyboardFocusManager.getCurrentKeyboardFocusManager().focusPreviousComponent();
-                    tbl_entries.clearSelection();
-                }
-                else {
-                    int rowIndex = tbl_entries.getSelectedRow() - 1;
-                    if (rowIndex < 0) rowIndex = tbl_entries.getRowCount() - 1;
-                    tbl_entries.setRowSelectionInterval(rowIndex, rowIndex);
-                }
+        fileMenu.add(fileSaveItem);
+        fileSaveItem.addActionListener(action -> save());
+
+        fileMenu.add(fileCloseItem);
+        fileCloseItem.addActionListener(action -> {
+            if (!unsavedChanges || JOptionPane.showConfirmDialog(frame,
+                "You have unsaved changes. Are you sure you want to close this vault?", "Warning",
+                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION) {
+                frame.dispose();
+                owner.setVisible(true);
             }
         });
 
@@ -132,6 +123,36 @@ public class Vault {
             @Override
             public void actionPerformed (ActionEvent e) {
                 save();
+            }
+        });
+
+        tbl_entries.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, 0), "focus_next");
+        tbl_entries.getActionMap().put("focus_next", new AbstractAction() {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                int nextRowIndex = tbl_entries.getSelectedRow() + 1;
+                if (nextRowIndex == tbl_entries.getRowCount()) {
+                    KeyboardFocusManager.getCurrentKeyboardFocusManager().focusNextComponent();
+                    tbl_entries.clearSelection();
+                }
+                else tbl_entries.setRowSelectionInterval(nextRowIndex, nextRowIndex);
+            }
+        });
+
+        tbl_entries.getInputMap(JComponent.WHEN_FOCUSED)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_TAB, InputEvent.SHIFT_DOWN_MASK), "focus_previous");
+        tbl_entries.getActionMap().put("focus_previous", new AbstractAction() {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                if (tbl_entries.getSelectedRow() == 0) {
+                    KeyboardFocusManager.getCurrentKeyboardFocusManager().focusPreviousComponent();
+                    tbl_entries.clearSelection();
+                }
+                else {
+                    int rowIndex = tbl_entries.getSelectedRow() - 1;
+                    if (rowIndex < 0) rowIndex = tbl_entries.getRowCount() - 1;
+                    tbl_entries.setRowSelectionInterval(rowIndex, rowIndex);
+                }
             }
         });
 
@@ -200,7 +221,6 @@ public class Vault {
     }
 
     private String getWindowTitle () {
-        System.out.println(name);
         return (unsavedChanges ? "*" : "") + name + " - Java Password Manager";
     }
 
