@@ -1,6 +1,8 @@
 package com.group3.pwmanager.vault;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -40,6 +42,16 @@ public class VaultEntryDialogue extends JDialog {
         btn_save.addActionListener(event -> save());
         btn_saveClose.addActionListener(event -> {
             if (save()) dispose();
+        });
+
+        // Set keybinds
+        pnl_main.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancel");
+        pnl_main.getActionMap().put("cancel", new AbstractAction() {
+            @Override
+            public void actionPerformed (ActionEvent e) {
+                onCancel();
+            }
         });
 
         // Set instance variables
