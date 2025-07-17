@@ -54,9 +54,8 @@ public class HomeMenu {
 
         // Setup buttons
         btn_createVault.addActionListener(event -> {
-            String keyString = JOptionPane.showInputDialog(frame, "Create a key for your vault");
-            if (keyString == null) return;
-            SecretKey key = EncryptionUtils.generateKeyFromString(keyString);
+            SecretKey key = new SecretKeyDialogue(frame).showKeyDialogue();
+            if (key == null) return;
 
             Vault vault = new Vault(this, key);
             vault.setVisible(true);
@@ -80,9 +79,8 @@ public class HomeMenu {
                 throw new RuntimeException(e);
             }
 
-            String keyString = JOptionPane.showInputDialog(frame, "Enter the key to this vault");
-            if (keyString == null) return;
-            SecretKey key = EncryptionUtils.generateKeyFromString(keyString);
+            SecretKey key = new SecretKeyDialogue(frame).showKeyDialogue();
+            if (key == null) return;
 
             try {
                 String vaultJson = EncryptionUtils.decrypt(cipherText.toString(), key);
