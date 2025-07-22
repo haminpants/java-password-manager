@@ -27,8 +27,7 @@ public class PasswordGeneratorDialogue {
 
     private final JDialog dialog;
     private final char echoChar;
-    private Vault vault;
-    private VaultEntry entry;
+    private VaultEntryDialogue entryDialogue;
 
     public PasswordGeneratorDialogue (Window owner) {
         dialog = new JDialog(owner, Dialog.ModalityType.APPLICATION_MODAL);
@@ -71,12 +70,12 @@ public class PasswordGeneratorDialogue {
             .setContents(new StringSelection(new String(pwd_password.getPassword())), null));
 
         btn_apply.addActionListener(event -> {
-            if (entry == null || vault == null) {
+            if (entryDialogue == null) {
                 btn_apply.setEnabled(false);
                 return;
             }
-            entry.setPassword(new String(pwd_password.getPassword()));
-            vault.setUnsavedChanges(true);
+            entryDialogue.setPassword(new String(pwd_password.getPassword()));
+            dialog.dispose();
         });
 
         // Set up keybinds
@@ -98,10 +97,10 @@ public class PasswordGeneratorDialogue {
         });
     }
 
-    public PasswordGeneratorDialogue (Window owner, Vault vault, VaultEntry entry) {
-        this(owner);
-        this.vault = vault;
-        setEntry(entry);
+    public PasswordGeneratorDialogue (VaultEntryDialogue vaultEntryDialogue) {
+        this(vaultEntryDialogue.getOwner());
+        this.entryDialogue = vaultEntryDialogue;
+        btn_apply.setEnabled(true);
     }
 
     private void onCancel () {
@@ -110,11 +109,6 @@ public class PasswordGeneratorDialogue {
 
     public void show () {
         dialog.setVisible(true);
-    }
-
-    private void setEntry (VaultEntry entry) {
-        this.entry = entry;
-        btn_apply.setEnabled(entry != null);
     }
 
     {
@@ -180,7 +174,7 @@ public class PasswordGeneratorDialogue {
             new GridConstraints(4, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1, 1, null,
                 null, null, 0, false));
         pwd_password = new JPasswordField();
-        pwd_password.setColumns(32);
+        pwd_password.setColumns(0);
         pwd_password.setEditable(true);
         panel1.add(pwd_password,
             new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL,
