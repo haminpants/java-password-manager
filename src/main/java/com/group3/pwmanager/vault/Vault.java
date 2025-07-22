@@ -25,6 +25,7 @@ public class Vault {
     private JButton btn_addEntry;
     private JButton btn_editEntry;
     private JButton btn_copyPassword;
+    private JButton btn_passwordGenerator;
 
     private JMenuBar menuBar = new JMenuBar();
     private JMenu fileMenu = new JMenu("File");
@@ -95,6 +96,8 @@ public class Vault {
             }
             copyPassword(index);
         });
+
+        btn_passwordGenerator.addActionListener(event -> new PasswordGeneratorDialogue(frame).show());
 
         // Set up key bindings
         pnl_main.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
@@ -283,10 +286,10 @@ public class Vault {
      */
     private void $$$setupUI$$$ () {
         pnl_main = new JPanel();
-        pnl_main.setLayout(new GridLayoutManager(3, 4, new Insets(0, 15, 15, 15), -1, -1));
+        pnl_main.setLayout(new GridLayoutManager(3, 6, new Insets(0, 15, 15, 15), -1, -1));
         final JScrollPane scrollPane1 = new JScrollPane();
         pnl_main.add(scrollPane1,
-            new GridConstraints(2, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
+            new GridConstraints(2, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
                 GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW,
                 GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null,
                 new Dimension(900, 500), null, 0, false));
@@ -309,7 +312,7 @@ public class Vault {
                 GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JSeparator separator1 = new JSeparator();
         pnl_main.add(separator1,
-            new GridConstraints(1, 0, 1, 4, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
+            new GridConstraints(1, 0, 1, 6, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
                 GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btn_copyPassword = new JButton();
         btn_copyPassword.setEnabled(false);
@@ -321,11 +324,24 @@ public class Vault {
                 GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new GridLayoutManager(1, 1, new Insets(0, 0, 0, 0), -1, -1));
-        pnl_main.add(panel1, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
+        pnl_main.add(panel1, new GridConstraints(0, 5, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH,
             GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW,
             GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        final JSeparator separator2 = new JSeparator();
+        separator2.setOrientation(1);
+        pnl_main.add(separator2,
+            new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, 1,
+                GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        btn_passwordGenerator = new JButton();
+        btn_passwordGenerator.setIcon(new ImageIcon(getClass().getResource("/form_assets/random_32px.png")));
+        btn_passwordGenerator.setText("");
+        btn_passwordGenerator.setToolTipText("Password Generator");
+        pnl_main.add(btn_passwordGenerator,
+            new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, 1,
+                GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }
 
     /** @noinspection ALL */
     public JComponent $$$getRootComponent$$$ () { return pnl_main; }
+
 }

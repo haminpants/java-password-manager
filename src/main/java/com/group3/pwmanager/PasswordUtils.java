@@ -4,7 +4,7 @@ import java.security.SecureRandom;
 import java.util.function.IntPredicate;
 
 public class PasswordUtils {
-    public static String generatePassword (boolean useUpperCase, boolean useLowerCase, boolean useNumbers, boolean useSpecialChars, int length) {
+    public static String generatePassword (boolean useUppercase, boolean useLowercase, boolean useNumbers, boolean useSpecialChars, int length) {
         int leftLimit = 37;
         int rightLimit = 122;
         SecureRandom random = new SecureRandom();
@@ -26,8 +26,8 @@ public class PasswordUtils {
 
         IntPredicate finalFilter = i -> true;
 
-        if (!useUpperCase) finalFilter = NoUc.and(finalFilter);
-        if (!useLowerCase) finalFilter = NoLc.and(finalFilter);
+        if (!useUppercase) finalFilter = NoUc.and(finalFilter);
+        if (!useLowercase) finalFilter = NoLc.and(finalFilter);
         if (!useNumbers) finalFilter = NoNum.and(finalFilter);
         if (!useSpecialChars) finalFilter = NoSpec.and(finalFilter);
 
